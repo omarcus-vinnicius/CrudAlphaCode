@@ -17,11 +17,33 @@ final class Crud
 
         if ($users) {
 
-            $response = $response->withJson(['res' => $users]);
+            $response = $response->withJson($users);
 
         } else {
 
             $response = $response->withJson(['res' => 'Não a usuarios para listar']);
+
+        }
+
+
+        return $response;
+
+    }
+
+
+    public function GetUsersID(Request $request, Response $response, array $args): Response
+    {
+        $id = intval($args['id']);
+        $usersCrud = new CrudBD();
+        $users = $usersCrud->GetUserID($id);
+
+        if ($users) {
+
+            $response = $response->withJson($users);
+
+        } else {
+
+            $response = $response->withJson(['res' => 'Usuario não encontrado']);
 
         }
 
@@ -40,20 +62,40 @@ final class Crud
         $profissao = Trim($request->getParsedBody()['Profissao']);
         $telefoneContato = Trim($request->getParsedBody()['TelefoneContato']);
         $celularContato = Trim($request->getParsedBody()['CelularContato']);
-        $notificacaoEmail = $request->getParsedBody()['NotificacaoEmail'];
-        $notificacaoWhatsapp = $request->getParsedBody()['NotificacaoWhatsapp'];
-        $notificacaoSMS = $request->getParsedBody()['NotificacaoSMS'];
+        $notificacaoEmail = strtoupper($request->getParsedBody()['NotificacaoEmail']);
+        $notificacaoWhatsapp = strtoupper($request->getParsedBody()['NotificacaoWhatsapp']);
+        $notificacaoSMS = strtoupper($request->getParsedBody()['NotificacaoSMS']);
+
+        if ($notificacaoEmail === "TRUE") {
+            $notificacaoEmail = 1;
+
+        } else {
+            $notificacaoEmail = 0;
+        }
+        if ($notificacaoWhatsapp === "TRUE") {
+            $notificacaoWhatsapp = 1;
+
+        } else {
+            $notificacaoWhatsapp = 0;
+
+        }
+        if ($notificacaoSMS === "TRUE") {
+            $notificacaoSMS = 1;
+
+        } else {
+            $notificacaoSMS = 0;
+        }
+
 
         $usersCrud = new CrudBD();
 
         if (
             !empty($nome) && !empty($email) && !empty($dataDeNascimento) &&
-            !empty($profissao) && !empty($telefoneContato) && !empty($celularContato) &&
-            !empty($notificacaoEmail) && !empty($notificacaoWhatsapp) && !empty($notificacaoSMS)
+            !empty($profissao) && !empty($telefoneContato) && !empty($celularContato)
         ) {
 
 
-            $usersCrud->InsertUser($users, $dataDeNascimento);
+            $usersCrud->InsertUser($users, $dataDeNascimento, $notificacaoEmail, $notificacaoWhatsapp, $notificacaoSMS);
             $response = $response->withJson(['res' => 'True', 'msg' => 'Usuario criado com sucesso', $users]);
 
         } else {
@@ -100,19 +142,38 @@ final class Crud
         $profissao = Trim($request->getParsedBody()['Profissao']);
         $telefoneContato = Trim($request->getParsedBody()['TelefoneContato']);
         $celularContato = Trim($request->getParsedBody()['CelularContato']);
-        $notificacaoEmail = $request->getParsedBody()['NotificacaoEmail'];
-        $notificacaoWhatsapp = $request->getParsedBody()['NotificacaoWhatsapp'];
-        $notificacaoSMS = $request->getParsedBody()['NotificacaoSMS'];
+        $notificacaoEmail = strtoupper($request->getParsedBody()['NotificacaoEmail']);
+        $notificacaoWhatsapp = strtoupper($request->getParsedBody()['NotificacaoWhatsapp']);
+        $notificacaoSMS = strtoupper($request->getParsedBody()['NotificacaoSMS']);
+
+        if ($notificacaoEmail === "TRUE") {
+            $notificacaoEmail = 1;
+
+        } else {
+            $notificacaoEmail = 0;
+        }
+        if ($notificacaoWhatsapp === "TRUE") {
+            $notificacaoWhatsapp = 1;
+
+        } else {
+            $notificacaoWhatsapp = 0;
+
+        }
+        if ($notificacaoSMS === "TRUE") {
+            $notificacaoSMS = 1;
+
+        } else {
+            $notificacaoSMS = 0;
+        }
 
         $usersCrud = new CrudBD();
 
         if (
             !empty($nome) && !empty($email) && !empty($dataDeNascimento) &&
-            !empty($profissao) && !empty($telefoneContato) && !empty($celularContato) &&
-            !empty($notificacaoEmail) && !empty($notificacaoWhatsapp) && !empty($notificacaoSMS)
+            !empty($profissao) && !empty($telefoneContato) && !empty($celularContato)
         ) {
 
-            $usersCrud->UptadeIdUsers($id, $users, $dataDeNascimento);
+            $usersCrud->UptadeIdUsers($id, $users, $dataDeNascimento, $notificacaoEmail, $notificacaoWhatsapp, $notificacaoSMS);
             $response = $response->withJson(['res' => 'True', 'msg' => 'Usuario atualizado com sucesso']);
 
         } else {

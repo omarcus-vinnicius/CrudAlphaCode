@@ -17,7 +17,7 @@ class CrudBD extends Connection
             ->query("SELECT IdUser, Nome, Email, Profissao, date_format(DataDeNascimento,'%d/%m/%Y') as DataDeNascimento, 
             TelefoneContato, CelularContato, 
              NotificacaoEmail, NotificacaoWhatsapp, NotificacaoSMS
-            FROM TblUsers;")
+            FROM TblUsers  order by IdUser desc;")
             ->fetchAll(\PDO::FETCH_ASSOC);
 
         if (count($users) === 0)
@@ -27,7 +27,23 @@ class CrudBD extends Connection
 
     }
 
-    public function InsertUser($userinsert, $dataDeNascimento)
+    public function GetUserID($id)
+    {
+        $users = $this->pdo
+            ->prepare("SELECT IdUser, Nome, Email, Profissao, date_format(DataDeNascimento,'%d/%m/%Y') as DataDeNascimento, 
+        TelefoneContato, CelularContato, 
+         NotificacaoEmail, NotificacaoWhatsapp, NotificacaoSMS
+        FROM TblUsers WHERE IdUser = :id;");
+
+        $users->execute(['id' => $id]);
+
+        $user = $users->fetchAll(\PDO::FETCH_ASSOC);
+
+        return $user;
+
+    }
+
+    public function InsertUser($userinsert, $dataDeNascimento, $notificacaoEmail, $notificacaoWhatsapp, $notificacaoSMS)
     {
         $user = $this->pdo
             ->prepare(" INSERT INTO TblUsers(
@@ -60,9 +76,9 @@ class CrudBD extends Connection
             'Profissao' => $userinsert['Profissao'],
             'TelefoneContato' => $userinsert['TelefoneContato'],
             'CelularContato' => $userinsert['CelularContato'],
-            'NotificacaoEmail' => $userinsert['NotificacaoEmail'],
-            'NotificacaoWhatsapp' => $userinsert['NotificacaoWhatsapp'],
-            'NotificacaoSMS' => $userinsert['NotificacaoSMS'],
+            'NotificacaoEmail' => $notificacaoEmail,
+            'NotificacaoWhatsapp' => $notificacaoWhatsapp,
+            'NotificacaoSMS' => $notificacaoSMS,
         ]);
 
         $user->fetchAll(\PDO::FETCH_ASSOC);
@@ -86,7 +102,7 @@ class CrudBD extends Connection
     }
 
 
-    public function UptadeIdUsers($id, $userupdate, $dataDeNascimento)
+    public function UptadeIdUsers($id, $userupdate, $dataDeNascimento, $notificacaoEmail, $notificacaoWhatsapp, $notificacaoSMS)
     {
         $user = $this->pdo
             ->prepare("UPDATE TblUsers SET 
@@ -109,9 +125,9 @@ class CrudBD extends Connection
             'Profissao' => $userupdate['Profissao'],
             'TelefoneContato' => $userupdate['TelefoneContato'],
             'CelularContato' => $userupdate['CelularContato'],
-            'NotificacaoEmail' => $userupdate['NotificacaoEmail'],
-            'NotificacaoWhatsapp' => $userupdate['NotificacaoWhatsapp'],
-            'NotificacaoSMS' => $userupdate['NotificacaoSMS'],
+            'NotificacaoEmail' => $notificacaoEmail,
+            'NotificacaoWhatsapp' => $notificacaoWhatsapp,
+            'NotificacaoSMS' => $notificacaoSMS
         ]);
 
 
